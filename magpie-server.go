@@ -59,7 +59,14 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		defer f.Close()
 
-		io.Copy(f, file)
+		_, err = io.Copy(f, file)
+		if err != nil {
+			log.Println("Error copying data", err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		log.Println("Uploaded file:", handler.Filename)
 		return
 	}
 	w.WriteHeader(http.StatusMethodNotAllowed)
